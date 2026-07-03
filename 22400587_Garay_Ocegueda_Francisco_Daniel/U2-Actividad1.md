@@ -71,7 +71,7 @@ db["libros"].find({
 
 
 ### 12. Mostrar únicamente el nombre y la carrera de todos los usuarios.
-```javascript
+
 db["usuarios"].find(
     {},
     {
