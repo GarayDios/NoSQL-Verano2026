@@ -3,32 +3,32 @@
 
 ### 1. Mostrar todos los libros publicados después del año 2022.
 
-db["Libros"].find({ año: { $gt: 2022 } })
+db["libros"].find({ año: { $gt: 2022 } })
 
 
 ### 2. Mostrar los usuarios cuya edad sea mayor o igual a 21 años.
 
-db["Usuarios"].find({ edad: { $gte: 21 } })
+db["usuarios"].find({ edad: { $gte: 21 } })
 
 
 ### 3. Mostrar los libros con menos de 350 páginas.
 
-db["Libros"].find({ paginas: { $lt: 350 } })
+db["libros"].find({ paginas: { $lt: 350 } })
 
 
 ### 4. Mostrar los usuarios cuya edad sea menor o igual a 20 años.
 
-db["Usuarios"].find({ edad: { $lte: 20 } })
+db["usuarios"].find({ edad: { $lte: 20 } })
 
 
 ### 5. Mostrar los libros cuya categoría sea diferente de "Programación".
 
-db["Libros"].find({ categoria: { $ne: "Programación" } })
+db["libros"].find({ categoria: { $ne: "Programación" } })
 
 
 ### 6. Mostrar los usuarios que estudien Ingeniería Informática y estén en sexto semestre o superior.
 
-db["Usuarios"].find({
+db["usuarios"].find({
     carrera: "Ingeniería Informática",
     semestre: { $gte: 6 }
 })
@@ -36,14 +36,14 @@ db["Usuarios"].find({
 
 ### 7. Mostrar los libros cuya categoría sea Programación o Bases de Datos.
 
-db["Libros"].find({
+db["libros"].find({
     categoria: { $in: ["Programación", "Bases de Datos"] }
 })
 
 
 ### 8. Mostrar los préstamos que no han sido devueltos y cuya duración sea mayor a 8 días.
 
-db["Prestamos"].find({
+db["prestamos"].find({
     devuelto: false,
     diasPrestamo: { $gt: 8 }
 })
@@ -51,28 +51,28 @@ db["Prestamos"].find({
 
 ### 9. Mostrar los libros cuyo título empiece con la letra M.
 
-db["Libros"].find({
+db["libros"].find({
     titulo: /^M/
 })
 
 
 ### 10. Mostrar los usuarios cuyo nombre empiece con la letra A.
 
-db["Usuarios"].find({
+db["usuarios"].find({
     nombre: /^A/
 })
 
 
 ### 11. Mostrar los libros cuyo título contenga la palabra "Base".
 
-db["Libros"].find({
+db["libros"].find({
     titulo: /Base/
 })
 
 
 ### 12. Mostrar únicamente el nombre y la carrera de todos los usuarios.
 ```javascript
-db["Usuarios"].find(
+db["usuarios"].find(
     {},
     {
         _id: 0,
@@ -84,7 +84,7 @@ db["Usuarios"].find(
 
 ### 13. Mostrar únicamente el título y el autor de todos los libros.
 
-db["Libros"].find(
+db["libros"].find(
     {},
     {
         _id: 0,
@@ -96,7 +96,7 @@ db["Libros"].find(
 
 ### 14. Mostrar únicamente el usuario y el libro de todos los préstamos.
 
-db["Prestamos"].find(
+db["prestamos"].find(
     {},
     {
         _id: 0,
@@ -108,28 +108,28 @@ db["Prestamos"].find(
 
 ### 15. Mostrar los libros ordenados por año de publicación, del más reciente al más antiguo.
 
-db["Libros"].find().sort({
+db["libros"].find().sort({
     año: -1
 })
 
 
 ### 16. Mostrar los usuarios ordenados alfabéticamente por nombre.
 
-db["Usuarios"].find().sort({
+db["usuarios"].find().sort({
     nombre: 1
 })
 
 
 ### 17. Mostrar los préstamos ordenados por la cantidad de días de préstamo, del mayor al menor.
 
-db["Prestamos"].find().sort({
+db["prestamos"].find().sort({
     diasPrestamo: -1
 })
 
 
 ### 18. Mostrar únicamente el título y el año de los libros publicados a partir de 2022, ordenados del más reciente al más antiguo.
 
-db["Libros"].find(
+db["libros"].find(
     {
         año: { $gte: 2022 }
     },
@@ -145,7 +145,7 @@ db["Libros"].find(
 
 ### 19. Mostrar el nombre y la carrera de los usuarios cuya carrera sea Ingeniería en Sistemas Computacionales o Ingeniería Informática.
 
-db["Usuarios"].find(
+db["usuarios"].find(
     {
         carrera: {
             $in: [
@@ -164,7 +164,7 @@ db["Usuarios"].find(
 
 ### 20. Mostrar los préstamos no devueltos, ordenados por la cantidad de días de préstamo de mayor a menor, mostrando únicamente el usuario, el libro y los días de préstamo.
 
-db["Prestamos"].find(
+db["prestamos"].find(
     {
         devuelto: false
     },
