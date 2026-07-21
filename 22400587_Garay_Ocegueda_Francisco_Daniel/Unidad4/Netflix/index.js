@@ -1,16 +1,37 @@
-/* esquema de netflix
-*/
+// ==========================================
+// API REST DE NETFLIX
+// ==========================================
+
 const express = require("express");
 const mongoose = require("mongoose");
 const morgan = require("morgan");
 const cors = require("cors");
 
+
+// ==========================================
+// CREAR APLICACIÓN
+// ==========================================
+
+const app = express();
+
+
+// ==========================================
+// MIDDLEWARES
+// ==========================================
+
 app.use(cors());
-app.use(morgan("dev"));
+
 app.use(express.json());
-    
+
+app.use(morgan("dev"));
+
+
+// ==========================================
+// ESQUEMA DE NETFLIX
+// ==========================================
 
 const netflixSchema = new mongoose.Schema({
+
     titulo: {
         type: String,
         required: true
@@ -45,50 +66,61 @@ const netflixSchema = new mongoose.Schema({
         type: String,
         required: true
     }
+
 });
 
+
+// ==========================================
+// MODELO NETFLIX
+// ==========================================
+
 const Netflix = mongoose.model("Netflix", netflixSchema);
-
-module.exports = Netflix;
-
-const express = require("express");
-const mongoose = require("mongoose");
-const morgan = require("morgan");
-
-const app = express();
-
-const PORT = 3000;
-
-
-// ==========================================
-// IMPORTAR MODELO NETFLIX
-// ==========================================
-
-const Netflix = require("./models/Netflix");
-
-
-// ==========================================
-// MIDDLEWARES
-// ==========================================
-
-// Permite recibir datos JSON
-app.use(express.json());
-
-// Muestra las peticiones en la consola
-app.use(morgan("dev"));
 
 
 // ==========================================
 // CONEXIÓN A MONGODB
 // ==========================================
 
-mongoose.connect("mongodb://127.0.0.1:27017/netflix")
-    .then(() => {
-        console.log("Conectado a MongoDB");
-    })
-    .catch((error) => {
-        console.error("Error al conectar a MongoDB:", error);
-    });
+// Para Vercel debes agregar la variable
+// MONGODB_URI en las variables de entorno.
+//
+// Ejemplo:
+//
+// MONGODB_URI=mongodb+srv://usuario:password@cluster.mongodb.net/netflix
+
+const MONGODB_URI = process.env.MONGODB_URI;
+
+
+// ==========================================
+// CONECTAR A MONGODB
+// ==========================================
+
+if (MONGODB_URI) {
+
+    mongoose.connect(MONGODB_URI)
+
+        .then(() => {
+
+            console.log("Conectado correctamente a MongoDB");
+
+        })
+
+        .catch((error) => {
+
+            console.error(
+                "Error al conectar a MongoDB:",
+                error.message
+            );
+
+        });
+
+} else {
+
+    console.log(
+        "ADVERTENCIA: No se encontró la variable MONGODB_URI"
+    );
+
+}
 
 
 // ==========================================
@@ -96,14 +128,38 @@ mongoose.connect("mongodb://127.0.0.1:27017/netflix")
 // ==========================================
 
 app.get("/", (req, res) => {
+
     res.json({
-        mensaje: "API de Netflix funcionando correctamente"
+
+        mensaje: "API de Netflix funcionando correctamente",
+
+        rutas: {
+
+            obtenerTodas:
+                "GET /netflix",
+
+            obtenerUna:
+                "GET /netflix/:id",
+
+            crear:
+                "POST /netflix",
+
+            actualizar:
+                "PUT /netflix/:id",
+
+            eliminar:
+                "DELETE /netflix/:id"
+
+        }
+
     });
+
 });
 
 
 // ==========================================
-// GET - OBTENER TODAS LAS PELÍCULAS
+// GET
+// OBTENER TODAS LAS PELÍCULAS
 // ==========================================
 
 app.get("/netflix", async (req, res) => {
@@ -112,13 +168,16 @@ app.get("/netflix", async (req, res) => {
 
         const peliculas = await Netflix.find();
 
-        res.json(peliculas);
+        res.status(200).json(peliculas);
 
     } catch (error) {
 
         res.status(500).json({
+
             mensaje: "Error al obtener las películas",
+
             error: error.message
+
         });
 
     }
@@ -127,7 +186,8 @@ app.get("/netflix", async (req, res) => {
 
 
 // ==========================================
-// GET - OBTENER UNA PELÍCULA POR ID
+// GET
+// OBTENER UNA PELÍCULA POR ID
 // ==========================================
 
 app.get("/netflix/:id", async (req, res) => {
@@ -138,21 +198,29 @@ app.get("/netflix/:id", async (req, res) => {
 
         const pelicula = await Netflix.findById(id);
 
+
         if (!pelicula) {
 
             return res.status(404).json({
+
                 error: "Película no encontrada"
+
             });
 
         }
 
-        res.json(pelicula);
+
+        res.status(200).json(pelicula);
+
 
     } catch (error) {
 
         res.status(500).json({
+
             mensaje: "Error al obtener la película",
+
             error: error.message
+
         });
 
     }
@@ -161,7 +229,8 @@ app.get("/netflix/:id", async (req, res) => {
 
 
 // ==========================================
-// POST - CREAR UNA NUEVA PELÍCULA
+// POST
+// CREAR UNA NUEVA PELÍCULA
 // ==========================================
 
 app.post("/netflix", async (req, res) => {
@@ -169,58 +238,95 @@ app.post("/netflix", async (req, res) => {
     try {
 
         const {
+
             titulo,
+
             genero,
+
             año,
+
             duracion,
+
             idioma,
+
             calificacion,
+
             nc
+
         } = req.body;
 
 
-        // Validar que todos los campos existan
+        // ==========================================
+        // VALIDAR CAMPOS
+        // ==========================================
 
         if (
+
             !titulo ||
+
             !genero ||
+
             !año ||
+
             !duracion ||
+
             !idioma ||
+
             calificacion === undefined ||
+
             !nc
+
         ) {
 
             return res.status(400).json({
+
                 error: "Faltan datos de la película"
+
             });
 
         }
 
 
-        // Crear nueva película
+        // ==========================================
+        // CREAR PELÍCULA
+        // ==========================================
 
         const nuevaPelicula = new Netflix({
 
             titulo,
+
             genero,
+
             año,
+
             duracion,
+
             idioma,
+
             calificacion,
+
             nc
 
         });
 
 
-        // Guardar en MongoDB
+        // ==========================================
+        // GUARDAR PELÍCULA
+        // ==========================================
 
-        const peliculaGuardada = await nuevaPelicula.save();
+        const peliculaGuardada =
+            await nuevaPelicula.save();
 
 
-        // Responder
+        // ==========================================
+        // RESPUESTA
+        // ==========================================
 
-        res.status(201).json(peliculaGuardada);
+        res.status(201).json(
+
+            peliculaGuardada
+
+        );
 
 
     } catch (error) {
@@ -239,7 +345,8 @@ app.post("/netflix", async (req, res) => {
 
 
 // ==========================================
-// PUT - ACTUALIZAR UNA PELÍCULA
+// PUT
+// ACTUALIZAR UNA PELÍCULA
 // ==========================================
 
 app.put("/netflix/:id", async (req, res) => {
@@ -249,41 +356,28 @@ app.put("/netflix/:id", async (req, res) => {
         const id = req.params.id;
 
 
-        const {
-            titulo,
-            genero,
-            año,
-            duracion,
-            idioma,
-            calificacion,
-            nc
-        } = req.body;
+        const peliculaActualizada =
+
+            await Netflix.findByIdAndUpdate(
+
+                id,
+
+                req.body,
+
+                {
+
+                    new: true,
+
+                    runValidators: true
+
+                }
+
+            );
 
 
-        // Buscar y actualizar
-
-        const peliculaActualizada = await Netflix.findByIdAndUpdate(
-
-            id,
-
-            {
-                titulo,
-                genero,
-                año,
-                duracion,
-                idioma,
-                calificacion,
-                nc
-            },
-
-            {
-                new: true
-            }
-
-        );
-
-
-        // Verificar si existe
+        // ==========================================
+        // VERIFICAR SI EXISTE
+        // ==========================================
 
         if (!peliculaActualizada) {
 
@@ -296,16 +390,23 @@ app.put("/netflix/:id", async (req, res) => {
         }
 
 
-        // Mostrar película actualizada
+        // ==========================================
+        // RESPUESTA
+        // ==========================================
 
-        res.json(peliculaActualizada);
+        res.status(200).json(
+
+            peliculaActualizada
+
+        );
 
 
     } catch (error) {
 
         res.status(500).json({
 
-            mensaje: "Error al actualizar la película",
+            mensaje:
+                "Error al actualizar la película",
 
             error: error.message
 
@@ -317,7 +418,8 @@ app.put("/netflix/:id", async (req, res) => {
 
 
 // ==========================================
-// DELETE - ELIMINAR UNA PELÍCULA
+// DELETE
+// ELIMINAR UNA PELÍCULA
 // ==========================================
 
 app.delete("/netflix/:id", async (req, res) => {
@@ -327,12 +429,18 @@ app.delete("/netflix/:id", async (req, res) => {
         const id = req.params.id;
 
 
-        // Buscar y eliminar
+        // ==========================================
+        // BUSCAR Y ELIMINAR
+        // ==========================================
 
-        const peliculaEliminada = await Netflix.findByIdAndDelete(id);
+        const peliculaEliminada =
+
+            await Netflix.findByIdAndDelete(id);
 
 
-        // Verificar si existe
+        // ==========================================
+        // VERIFICAR SI EXISTE
+        // ==========================================
 
         if (!peliculaEliminada) {
 
@@ -345,13 +453,17 @@ app.delete("/netflix/:id", async (req, res) => {
         }
 
 
-        // Respuesta
+        // ==========================================
+        // RESPUESTA
+        // ==========================================
 
-        res.json({
+        res.status(200).json({
 
-            mensaje: "Película eliminada correctamente",
+            mensaje:
+                "Película eliminada correctamente",
 
-            pelicula: peliculaEliminada
+            pelicula:
+                peliculaEliminada
 
         });
 
@@ -360,7 +472,8 @@ app.delete("/netflix/:id", async (req, res) => {
 
         res.status(500).json({
 
-            mensaje: "Error al eliminar la película",
+            mensaje:
+                "Error al eliminar la película",
 
             error: error.message
 
@@ -372,11 +485,37 @@ app.delete("/netflix/:id", async (req, res) => {
 
 
 // ==========================================
+// SERVIDOR LOCAL
+// ==========================================
+
+const PORT = process.env.PORT || 3000;
+
+
+// ==========================================
 // INICIAR SERVIDOR
 // ==========================================
 
-app.listen(PORT, () => {
+// Esta parte permite ejecutar el proyecto
+// con "node index.js" en tu computadora.
+//
+// En Vercel se exporta la aplicación
+// automáticamente.
 
-    console.log(`Servidor ejecutándose en http://localhost:${PORT}`);
+if (require.main === module) {
 
-});
+    app.listen(PORT, () => {
+
+        console.log(
+            `Servidor ejecutándose en http://localhost:${PORT}`
+        );
+
+    });
+
+}
+
+
+// ==========================================
+// EXPORTAR PARA VERCEL
+// ==========================================
+
+module.exports = app;
