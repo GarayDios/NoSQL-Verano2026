@@ -1,6 +1,5 @@
 
-
-const API_URL = "URL_VERCEL";
+const API_URL = "https://servidorpelis.vercel.app";
 
 // Obtener películas
 async function obtenerPeliculas() {
@@ -12,17 +11,19 @@ async function obtenerPeliculas() {
     }
 
     return await respuesta.json();
-
 }
+
 
 // Agregar película
 async function agregarPelicula(pelicula) {
 
     const respuesta = await fetch(`${API_URL}/peliculas`, {
         method: "POST",
+
         headers: {
             "Content-Type": "application/json"
         },
+
         body: JSON.stringify(pelicula)
     });
 
@@ -31,5 +32,5 @@ async function agregarPelicula(pelicula) {
     }
 
     return await respuesta.json();
-
 }
+

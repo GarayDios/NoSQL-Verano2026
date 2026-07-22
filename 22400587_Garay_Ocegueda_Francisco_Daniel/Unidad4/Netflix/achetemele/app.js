@@ -1,70 +1,244 @@
+// ==========================================
+// CARGAR PELÍCULAS AL INICIAR LA PÁGINA
+// ==========================================
 
+document.addEventListener("DOMContentLoaded", () => {
 
-const formulario = document.getElementById("formulario");
-
-const titulo = document.getElementById("titulo");
-const genero = document.getElementById("genero");
-const año = document.getElementById("año");
-const duracion = document.getElementById("duracion");
-const idioma = document.getElementById("idioma");
-const calificacion = document.getElementById("calificacion");
-
-const btnConsultar = document.getElementById("btnConsultar");
-const listaPeliculas = document.getElementById("listaPeliculas");
-
-// Guardar película
-formulario.addEventListener("submit", async (e) => {
-
-    e.preventDefault();
-
-    const pelicula = {
-        titulo: titulo.value,
-        genero: genero.value,
-        año: Number(año.value),
-        duracion: Number(duracion.value),
-        idioma: idioma.value,
-        calificacion: Number(calificacion.value)
-    };
-
-    try {
-
-        const respuesta = await agregarPelicula(pelicula);
-
-        alert(respuesta.mensaje);
-
-        formulario.reset();
-
-    } catch (error) {
-
-        alert(error.message);
-
-    }
+    cargarPeliculas();
 
 });
 
-// Consultar películas
-btnConsultar.addEventListener("click", async () => {
+
+// ==========================================
+// MOSTRAR PELÍCULAS
+// ==========================================
+
+async function cargarPeliculas() {
+
+    const lista = document.getElementById("listaPeliculas");
 
     try {
+
+        // Mostrar mensaje de carga
+
+        lista.innerHTML = `
+            <p style="color:white;">
+                 Cargando películas...
+            </p>
+        `;
+
+
+        // Consultar API
 
         const peliculas = await obtenerPeliculas();
 
-        listaPeliculas.innerHTML = "";
+        console.log("Películas recibidas:", peliculas);
 
-        peliculas.forEach((pelicula) => {
 
-            const li = document.createElement("li");
+        // Limpiar lista
 
-            li.textContent = pelicula.titulo;
+        lista.innerHTML = "";
 
-            listaPeliculas.appendChild(li);
+
+        // Si no hay películas
+
+        if (!peliculas || peliculas.length === 0) {
+
+            lista.innerHTML = `
+                <p style="color:white;">
+                    No hay películas disponibles.
+                </p>
+            `;
+
+            return;
+        }
+
+
+        // Crear tarjeta por cada película
+
+        peliculas.forEach(pelicula => {
+
+            const tarjeta = document.createElement("li");
+
+            tarjeta.className = "movie-card";
+
+
+            // Usar portada si existe
+
+            const portada = pelicula.portada
+                ? pelicula.portada
+                : "https://via.placeholder.com/300x450?text=Sin+Portada";
+
+
+            tarjeta.innerHTML = `
+
+                <img
+                    class="movie-image"
+                    src="${portada}"
+                    alt="${pelicula.titulo}"
+                    onerror="this.src='https://via.placeholder.com/300x450?text=Sin+Portada'"
+                >
+
+
+                <div class="movie-info">
+
+                    <div class="movie-title">
+
+                        ${pelicula.titulo || "Sin título"}
+
+                    </div>
+
+
+                    <div class="movie-details">
+
+                        <span>
+                            ${pelicula.genero || "Sin género"}
+                        </span>
+
+                        <span>
+                            ${pelicula.año || "N/A"}
+                        </span>
+
+                    </div>
+
+
+                    <div class="rating">
+
+                         ${pelicula.calificacion || "N/A"}
+
+                    </div>
+
+                </div>
+
+            `;
+
+
+            // Agregar tarjeta a la página
+
+            lista.appendChild(tarjeta);
 
         });
 
+
     } catch (error) {
 
-        alert(error.message);
+        console.error(
+            "Error al cargar las películas:",
+            error
+        );
+
+
+        lista.innerHTML = `
+
+            <div style="
+                color:white;
+                background:#250000;
+                padding:20px;
+                border-radius:10px;
+                grid-column:1/-1;
+            ">
+
+                <h3>
+                    Error al cargar las películas
+                </h3>
+
+                <p>
+                    ${error.message}
+                </p>
+
+            </div>
+
+        `;
 
     }
 
-});
+}
+
+
+// ==========================================
+// AGREGAR PELÍCULA
+// ==========================================
+
+document
+    .getElementById("formulario")
+    .addEventListener("submit", async (evento) => {
+
+        // Evitar recargar la página
+
+        evento.preventDefault();
+
+
+        // Crear objeto película
+
+        const pelicula = {
+
+            titulo: document
+                .getElementById("titulo")
+                .value,
+
+            genero: document
+                .getElementById("genero")
+                .value,
+
+            año: Number(
+                document
+                    .getElementById("año")
+                    .value
+            ),
+
+            duracion: Number(
+                document
+                    .getElementById("duracion")
+                    .value
+            ),
+
+            idioma: document
+                .getElementById("idioma")
+                .value,
+
+            calificacion: Number(
+                document
+                    .getElementById("calificacion")
+                    .value
+            )
+
+        };
+
+
+        try {
+
+            // Enviar película a la API
+
+            await agregarPelicula(pelicula);
+
+
+            // Mostrar mensaje
+
+            alert(
+                " ¡Película agregada correctamente!"
+            );
+
+
+            // Limpiar formulario
+
+            document
+                .getElementById("formulario")
+                .reset();
+
+
+            // Volver a cargar películas
+
+            cargarPeliculas();
+
+
+        } catch (error) {
+
+            console.error(error);
+
+            alert(
+                " Error al agregar la película"
+            );
+
+        }
+
+    });

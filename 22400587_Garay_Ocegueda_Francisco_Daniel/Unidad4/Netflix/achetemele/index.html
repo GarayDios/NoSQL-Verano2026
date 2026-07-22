@@ -1,122 +1,784 @@
-
 <!DOCTYPE html>
+
 <html lang="es">
 
 <head>
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Consumir API REST</title>
+```
+<title>StreamX | Tu mundo de entretenimiento</title>
 
-    <style>
-        body {
-            font-family: Arial, Helvetica, sans-serif;
-            width: 600px;
-            margin: 30px auto;
+<style>
+
+    /* ================================
+       RESET
+    ================================= */
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    html {
+        scroll-behavior: smooth;
+    }
+
+    body {
+        font-family: Arial, Helvetica, sans-serif;
+        background: #080808;
+        color: white;
+        min-height: 100vh;
+    }
+
+
+    /* ================================
+       NAVBAR
+    ================================= */
+
+    .navbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 70px;
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        padding: 0 5%;
+
+        background: linear-gradient(
+            to bottom,
+            rgba(0,0,0,0.95),
+            rgba(0,0,0,0.4),
+            transparent
+        );
+
+        z-index: 1000;
+    }
+
+    .logo {
+        font-size: 28px;
+        font-weight: bold;
+        color: #e50914;
+        letter-spacing: 2px;
+    }
+
+    .logo span {
+        color: white;
+    }
+
+    .nav-links {
+        display: flex;
+        gap: 25px;
+        list-style: none;
+    }
+
+    .nav-links a {
+        color: #ddd;
+        text-decoration: none;
+        font-size: 14px;
+        transition: 0.3s;
+    }
+
+    .nav-links a:hover {
+        color: white;
+    }
+
+    .perfil {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #e50914, #8b0000);
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        font-weight: bold;
+    }
+
+
+    /* ================================
+       HERO
+    ================================= */
+
+    .hero {
+        height: 650px;
+
+        display: flex;
+        align-items: center;
+
+        padding: 0 7%;
+
+        background:
+            linear-gradient(
+                to right,
+                #080808 5%,
+                rgba(8,8,8,0.85) 35%,
+                rgba(8,8,8,0.25) 70%,
+                #080808 100%
+            ),
+            linear-gradient(
+                to top,
+                #080808 0%,
+                transparent 30%
+            ),
+            url("https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=2000&q=80");
+
+        background-size: cover;
+        background-position: center;
+    }
+
+    .hero-content {
+        max-width: 600px;
+        margin-top: 80px;
+    }
+
+    .hero-tag {
+        color: #e50914;
+        font-weight: bold;
+        letter-spacing: 3px;
+        margin-bottom: 15px;
+    }
+
+    .hero h1 {
+        font-size: 64px;
+        line-height: 1;
+        margin-bottom: 20px;
+    }
+
+    .hero p {
+        color: #ccc;
+        line-height: 1.6;
+        font-size: 17px;
+        margin-bottom: 25px;
+    }
+
+    .hero-buttons {
+        display: flex;
+        gap: 15px;
+    }
+
+    .btn-primary,
+    .btn-secondary {
+        border: none;
+        padding: 13px 25px;
+        border-radius: 5px;
+
+        font-size: 15px;
+        font-weight: bold;
+
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    .btn-primary {
+        background: white;
+        color: black;
+    }
+
+    .btn-primary:hover {
+        background: #ddd;
+        transform: scale(1.05);
+    }
+
+    .btn-secondary {
+        background: rgba(100,100,100,0.7);
+        color: white;
+    }
+
+    .btn-secondary:hover {
+        background: rgba(150,150,150,0.8);
+    }
+
+
+    /* ================================
+       CONTENEDOR
+    ================================= */
+
+    .container {
+        width: 90%;
+        max-width: 1400px;
+        margin: auto;
+        padding: 40px 0;
+    }
+
+
+    /* ================================
+       BUSCADOR
+    ================================= */
+
+    .search-section {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        margin-bottom: 35px;
+
+        gap: 20px;
+    }
+
+    .search-box {
+        width: 400px;
+        position: relative;
+    }
+
+    .search-box input {
+        width: 100%;
+        padding: 15px 20px;
+
+        border-radius: 30px;
+        border: 1px solid #333;
+
+        background: #181818;
+        color: white;
+
+        outline: none;
+    }
+
+    .search-box input:focus {
+        border-color: #e50914;
+    }
+
+
+    /* ================================
+       FILTROS
+    ================================= */
+
+    .filters {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-bottom: 35px;
+    }
+
+    .filter {
+        padding: 8px 18px;
+
+        border-radius: 20px;
+        border: 1px solid #333;
+
+        background: #181818;
+        color: #bbb;
+
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    .filter:hover,
+    .filter.active {
+        background: #e50914;
+        color: white;
+        border-color: #e50914;
+    }
+
+
+    /* ================================
+       TITULOS
+    ================================= */
+
+    .section-title {
+        font-size: 25px;
+        margin-bottom: 20px;
+    }
+
+
+    /* ================================
+       GRID PELICULAS
+    ================================= */
+
+    #listaPeliculas {
+        display: grid;
+
+        grid-template-columns:
+            repeat(auto-fill, minmax(200px, 1fr));
+
+        gap: 20px;
+
+        list-style: none;
+    }
+
+
+    /* ================================
+       TARJETA
+    ================================= */
+
+    .movie-card {
+        position: relative;
+
+        height: 320px;
+
+        border-radius: 8px;
+
+        overflow: hidden;
+
+        background: #181818;
+
+        cursor: pointer;
+
+        transition:
+            transform 0.3s,
+            box-shadow 0.3s;
+    }
+
+    .movie-card:hover {
+        transform: scale(1.05);
+
+        box-shadow:
+            0 15px 40px
+            rgba(0,0,0,0.8);
+    }
+
+    .movie-image {
+        width: 100%;
+        height: 100%;
+
+        object-fit: cover;
+
+        background:
+            linear-gradient(
+                135deg,
+                #333,
+                #111
+            );
+    }
+
+    .movie-info {
+        position: absolute;
+
+        bottom: 0;
+        left: 0;
+
+        width: 100%;
+
+        padding: 50px 15px 15px;
+
+        background:
+            linear-gradient(
+                transparent,
+                rgba(0,0,0,0.95)
+            );
+    }
+
+    .movie-title {
+        font-size: 18px;
+        font-weight: bold;
+
+        margin-bottom: 8px;
+    }
+
+    .movie-details {
+        display: flex;
+        justify-content: space-between;
+
+        color: #bbb;
+
+        font-size: 12px;
+    }
+
+    .rating {
+        color: #ffd700;
+        font-weight: bold;
+    }
+
+
+    /* ================================
+       FORMULARIO
+    ================================= */
+
+    .admin-section {
+        margin-top: 80px;
+
+        padding: 35px;
+
+        background: #111;
+
+        border-radius: 10px;
+
+        border: 1px solid #222;
+    }
+
+    .admin-section h2 {
+        margin-bottom: 25px;
+    }
+
+    #formulario {
+        display: grid;
+
+        grid-template-columns:
+            repeat(auto-fit, minmax(200px, 1fr));
+
+        gap: 15px;
+    }
+
+    #formulario input {
+        width: 100%;
+
+        padding: 14px;
+
+        background: #1c1c1c;
+
+        border: 1px solid #333;
+
+        border-radius: 5px;
+
+        color: white;
+
+        outline: none;
+    }
+
+    #formulario input:focus {
+        border-color: #e50914;
+    }
+
+    #formulario button {
+        grid-column: 1 / -1;
+
+        padding: 14px;
+
+        background: #e50914;
+
+        border: none;
+
+        border-radius: 5px;
+
+        color: white;
+
+        font-weight: bold;
+
+        cursor: pointer;
+
+        transition: 0.3s;
+    }
+
+    #formulario button:hover {
+        background: #b20710;
+    }
+
+
+    /* ================================
+       FOOTER
+    ================================= */
+
+    footer {
+        margin-top: 80px;
+
+        padding: 40px;
+
+        text-align: center;
+
+        color: #777;
+
+        border-top: 1px solid #222;
+    }
+
+
+    /* ================================
+       RESPONSIVE
+    ================================= */
+
+    @media (max-width: 768px) {
+
+        .nav-links {
+            display: none;
         }
 
-        input {
-            display: block;
+        .hero {
+            height: 550px;
+        }
+
+        .hero h1 {
+            font-size: 42px;
+        }
+
+        .hero p {
+            font-size: 15px;
+        }
+
+        .search-section {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .search-box {
             width: 100%;
-            padding: 8px;
-            margin: 10px 0;
-            box-sizing: border-box;
         }
 
-        button {
-            padding: 10px 15px;
-            margin: 10px 0;
-            cursor: pointer;
+        #listaPeliculas {
+            grid-template-columns:
+                repeat(2, 1fr);
         }
 
-        ul {
-            margin-top: 20px;
-            padding: 0;
-        }
+    }
 
-        li {
-            margin: 8px 0;
-            list-style: none;
-            padding: 10px;
-            border: 1px solid #ccc;
-        }
-    </style>
+</style>
+```
+
 </head>
 
 <body>
 
-    <h1>Películas</h1>
+```
+<!-- ================================
+     NAVBAR
+================================= -->
 
-    <h2>Registrar película</h2>
+<nav class="navbar">
 
-    <form id="formulario">
+    <div class="logo">
+        STREAM<span>X</span>
+    </div>
 
-        <input
-            type="text"
-            id="titulo"
-            placeholder="Título"
-            required
-        >
+    <ul class="nav-links">
 
-        <input
-            type="text"
-            id="genero"
-            placeholder="Género"
-            required
-        >
+        <li>
+            <a href="#inicio">
+                Inicio
+            </a>
+        </li>
 
-        <input
-            type="number"
-            id="año"
-            placeholder="Año"
-            required
-        >
+        <li>
+            <a href="#peliculas">
+                Películas
+            </a>
+        </li>
 
-        <input
-            type="number"
-            id="duracion"
-            placeholder="Duración en minutos"
-            required
-        >
+        <li>
+            <a href="#admin">
+                Administrar
+            </a>
+        </li>
 
-        <input
-            type="text"
-            id="idioma"
-            placeholder="Idioma"
-            required
-        >
+    </ul>
 
-        <input
-            type="number"
-            id="calificacion"
-            placeholder="Calificación"
-            min="0"
-            max="10"
-            step="0.1"
-            required
-        >
+    <div class="perfil">
+        DG
+    </div>
 
-        <button type="submit">
-            Guardar película
+</nav>
+
+
+<!-- ================================
+     HERO
+================================= -->
+
+<section
+    class="hero"
+    id="inicio"
+>
+
+    <div class="hero-content">
+
+        <div class="hero-tag">
+            STREAMX ORIGINAL
+        </div>
+
+        <h1>
+            El cine comienza aquí
+        </h1>
+
+        <p>
+            Descubre historias increíbles, explora nuevos mundos
+            y encuentra tu próxima película favorita.
+        </p>
+
+        <div class="hero-buttons">
+
+            <button
+                class="btn-primary"
+                onclick="document.getElementById('peliculas').scrollIntoView()"
+            >
+                ▶ Explorar películas
+            </button>
+
+            <button
+                class="btn-secondary"
+                onclick="alert('Selecciona una película para conocer todos sus detalles')"
+            >
+                ⓘ Más información
+            </button>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ================================
+     CONTENIDO
+================================= -->
+
+<main
+    class="container"
+    id="peliculas"
+>
+
+
+    <!-- BUSCADOR -->
+
+    <div class="search-section">
+
+        <h2 class="section-title">
+            Descubre tu próxima historia
+        </h2>
+
+        <div class="search-box">
+
+            <input
+                type="text"
+                id="buscar"
+                placeholder="🔍 Buscar película..."
+            >
+
+        </div>
+
+    </div>
+
+
+    <!-- FILTROS -->
+
+    <div class="filters">
+
+        <button class="filter active">
+            Todos
         </button>
 
-    </form>
+        <button class="filter">
+            Acción
+        </button>
 
-    <hr>
+        <button class="filter">
+            Drama
+        </button>
 
-    <button
-        type="button"
-        id="btnConsultar">
-        Consultar películas
-    </button>
+        <button class="filter">
+            Comedia
+        </button>
 
-    <ul id="listaPeliculas"></ul>
+        <button class="filter">
+            Terror
+        </button>
 
-    <script src="./api.js"></script>
-    <script src="./app.js"></script>
+        <button class="filter">
+            Ciencia ficción
+        </button>
+
+    </div>
+
+
+    <!-- PELICULAS -->
+
+    <h2 class="section-title">
+        🔥 Películas disponibles
+    </h2>
+
+    <ul id="listaPeliculas">
+
+        <!-- Las películas se cargarán desde la API -->
+
+    </ul>
+
+
+    <!-- ================================
+         ADMINISTRACION
+    ================================= -->
+
+    <section
+        class="admin-section"
+        id="admin"
+    >
+
+        <h2>
+            🎬 Agregar nueva película
+        </h2>
+
+        <form id="formulario">
+
+            <input
+                type="text"
+                id="titulo"
+                placeholder="Título de la película"
+                required
+            >
+
+            <input
+                type="text"
+                id="genero"
+                placeholder="Género"
+                required
+            >
+
+            <input
+                type="number"
+                id="año"
+                placeholder="Año"
+                required
+            >
+
+            <input
+                type="number"
+                id="duracion"
+                placeholder="Duración en minutos"
+                required
+            >
+
+            <input
+                type="text"
+                id="idioma"
+                placeholder="Idioma"
+                required
+            >
+
+            <input
+                type="number"
+                id="calificacion"
+                placeholder="Calificación 0 - 10"
+                min="0"
+                max="10"
+                step="0.1"
+                required
+            >
+
+            <button type="submit">
+                + Agregar película
+            </button>
+
+        </form>
+
+    </section>
+
+
+</main>
+
+
+<!-- FOOTER -->
+
+<footer>
+
+    <p>
+        © 2026 StreamX
+    </p>
+
+    <p>
+        Plataforma de entretenimiento creada con Node.js,
+        Express y MongoDB.
+    </p>
+
+</footer>
+
+
+<!-- SCRIPTS -->
+
+<script src="api.js"></script>
+
+<script src="app.js"></script>
+```
 
 </body>
 
 </html>
-```

@@ -16,16 +16,23 @@ app.use(cors());
 app.use(express.json());
 app.use(morgan('dev'));
 
-mongoose.connect(
-  'mongodb+srv://grupo:grupo@servidorprueba.ygegryf.mongodb.net/netflix'
-)
-.then(() => {
-  console.log('Conectado correctamente a MongoDB');
-})
-.catch((error) => {
-  console.error('Error al conectar a MongoDB:', error);
-});
 
+
+async function iniciarservidor(){
+  try { await mongoose.connect('mongodb+srv://grupo:grupo@servidorprueba.ygegryf.mongodb.net/netflix') 
+
+    console.log('Conectado correctamente a MongoDB');
+    app.listen(port, () => {
+      console.log(`Servidor ejecutándose en http://localhost:${port}`);
+    });
+  }
+  catch (error) {
+    console.error('Error al conectar a MongoDB:');
+    console.error(error);
+
+  }
+}
+inicairservidor();
 // Ruta principal para comprobar que la API funciona
 app.get('/', (req, res) => {
     res.send('API de Netflix funcionando correctamente');
@@ -134,3 +141,19 @@ if (require.main === module) {
 }
 
 module.exports = app;
+
+async function iniciarservidor(){
+  try { await mongoose.connect('mongodb+srv://grupo:grupo@servidorprueba.ygegryf.mongodb.net/netflix') 
+
+    console.log('Conectado correctamente a MongoDB');
+    app.listen(port, () => {
+      console.log(`Servidor ejecutándose en http://localhost:${port}`);
+    });
+  }
+  catch (error) {
+    console.error('Error al conectar a MongoDB:');
+    console.error(error);
+
+  }
+}
+inicairservidor();
