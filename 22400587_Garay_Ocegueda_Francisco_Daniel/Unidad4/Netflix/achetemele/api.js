@@ -1,36 +1,53 @@
+const API_URL = "https://servidorpelis.vercel.app";
 
-const API_URL = "https://no-sql-verano2026-olive.vercel.app";
+// ==========================================
+// OBTENER PELÍCULAS
+// ==========================================
 
-// Obtener películas
 async function obtenerPeliculas() {
 
-    const respuesta = await fetch(`${API_URL}/peliculas`);
+    const respuesta = await fetch(
+        `${API_URL}/peliculas`
+    );
 
     if (!respuesta.ok) {
-        throw new Error("Error al consultar las películas");
+
+        throw new Error(
+            `Error HTTP ${respuesta.status}: Error al consultar las películas`
+        );
+
     }
 
     return await respuesta.json();
 }
 
 
-// Agregar película
+// ==========================================
+// AGREGAR PELÍCULA
+// ==========================================
+
 async function agregarPelicula(pelicula) {
 
-    const respuesta = await fetch(`${API_URL}/peliculas`, {
-        method: "POST",
+    const respuesta = await fetch(
+        `${API_URL}/peliculas`,
+        {
+            method: "POST",
 
-        headers: {
-            "Content-Type": "application/json"
-        },
+            headers: {
+                "Content-Type": "application/json"
+            },
 
-        body: JSON.stringify(pelicula)
-    });
+            body: JSON.stringify(pelicula)
+        }
+    );
 
     if (!respuesta.ok) {
-        throw new Error("Error al guardar la película");
+
+        throw new Error(
+            `Error HTTP ${respuesta.status}: Error al guardar la película`
+        );
+
     }
 
     return await respuesta.json();
 }
-
