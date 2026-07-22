@@ -1,5 +1,5 @@
 
-const API_URL = "https://no-sql-verano2026-olive.vercel.app/";
+const API_URL = "https://no-sql-verano2026-olive.vercel.app";
 
 // Obtener películas
 async function obtenerPeliculas() {
